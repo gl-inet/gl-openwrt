@@ -17,10 +17,29 @@
 		label-mac-device = &gmac0;
 	};
 
+	backlight: backlight {
+		compatible = "pwm-backlight";
+		pwms = <&pwm 2 50000>;
+		brightness-levels = <0    1    1    1    2    2    3    4    5    6    7
+			  8    9   10   12   13   15   16   18   20   22
+			 24   26   29   31   34   37   40   43   46   50
+			 53   57   61   65   69   74   78   83   88   93
+			 98  103  109  114  120  126  132  138  145  151
+			158  165  172  179  187  194  202  210  218  226
+			235  243  252  261  270  279  289  298  308  318
+			328  338  349  359  370  381  392  403  415  426
+			438  450  462  474  487  499  512  525  538  551
+			565  578  592  606  620  634  649  663  678  693
+			708  723  738  754  770  785  801  818  834  850
+			867  884  901  918  935  952  970  988 1006 1023>;
+		default-brightness-level = <95>;
+	};
+
 	chosen {
 		bootargs = "console=ttyS0,115200n1 \
 			    earlycon=uart8250,mmio32,0x11000000 \
-			    pci=pcie_bus_perf";
+			    pci=pcie_bus_perf \
+			    fbcon=logo-count:1 vt.global_cursor_default=0";
 		stdout-path = "serial0:115200n8";
 	};
 
@@ -236,12 +255,48 @@
 			groups = "pwm1_0";
 		};
 	};
+
+	pwm2_pins: pwm2-pins {
+		mux {
+			function = "pwm";
+			groups = "pwm2_0";
+		};
+	};
 };
 
 &pwm {
 	pinctrl-names = "default";
-	pinctrl-0 = <&pwm1_pins>;
+	pinctrl-0 = <&pwm1_pins &pwm2_pins>;
 	status = "okay";
+};
+
+&spi1 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&spic_pins>;
+	cs_setup_time = <2>;
+	status = "okay";
+
+	display@0 {
+		compatible = "sitronix,st7789p3";
+		reg = <0>;
+		backlight = <&backlight>;
+		buswidth = <8>;
+		width = <240>;
+		height = <320>;
+		rotate = <0>;
+		fps = <40>;
+		te-gpios = <&pio 9 GPIO_ACTIVE_HIGH>;
+		dc-gpios = <&pio 22 GPIO_ACTIVE_HIGH>;
+		reset-gpios = <&pio 10 GPIO_ACTIVE_LOW>;
+		spi-max-frequency = <52000000>;
+	};
+};
+
+&spic_pins {
+	mux {
+		function = "spi";
+		groups = "spi1_1";
+	};
 };
 
 &ssusb {

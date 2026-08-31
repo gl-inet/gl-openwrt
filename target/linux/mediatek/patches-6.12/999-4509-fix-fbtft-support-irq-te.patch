@@ -1,0 +1,30 @@
+Index: drivers/staging/fbtft/fbtft.h
+===================================================================
+--- a/drivers/staging/fbtft/fbtft.h
++++ b/drivers/staging/fbtft/fbtft.h
+@@ -8,6 +8,7 @@
+ #include <linux/spinlock.h>
+ #include <linux/spi/spi.h>
+ #include <linux/platform_device.h>
++#include <linux/completion.h>
+ 
+ #define FBTFT_ONBOARD_BACKLIGHT 2
+ 
+@@ -166,6 +167,8 @@ struct fbtft_platform_data {
+  * @fbtftops: FBTFT operations provided by driver or device (platform_data)
+  * @dirty_lock: Protects dirty_lines_start and dirty_lines_end
+  * @dirty_lines_start: Where to begin updating display
++ * @panel_te: completion for panel TE line
++ * @irq_te: Linux IRQ for LCD TE line
+  * @dirty_lines_end: Where to end updating display
+  * @gpio.reset: GPIO used to reset display
+  * @gpio.dc: Data/Command signal, also known as RS
+@@ -203,6 +206,8 @@ struct fbtft_par {
+ 	u8 startbyte;
+ 	struct fbtft_ops fbtftops;
+ 	spinlock_t dirty_lock;
++	struct completion panel_te;
++	int irq_te;
+ 	unsigned int dirty_lines_start;
+ 	unsigned int dirty_lines_end;
+ 	struct {

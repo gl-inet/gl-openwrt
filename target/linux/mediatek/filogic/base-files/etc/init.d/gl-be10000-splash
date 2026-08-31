@@ -1,0 +1,17 @@
+#!/bin/sh /etc/rc.common
+
+START=99
+
+start() {
+	[ "$(cat /tmp/sysinfo/board_name 2>/dev/null)" = "glinet,gl-be10000" ] || return 0
+
+	local retries=50
+	while [ ! -c /dev/fb0 ] && [ "$retries" -gt 0 ]; do
+		sleep 0.1
+		retries=$((retries - 1))
+	done
+
+	[ -c /dev/fb0 ] || return 1
+	dd if=/usr/share/gl-be10000/logo.rgb565 of=/dev/fb0 \
+		bs=153600 count=1 2>/dev/null
+}

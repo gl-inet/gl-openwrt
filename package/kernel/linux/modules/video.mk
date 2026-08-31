@@ -249,12 +249,10 @@ define KernelPackage/fb-tft
 	  @GPIO_SUPPORT +kmod-backlight \
 	  +kmod-fb +kmod-fb-sys-fops +kmod-fb-sys-ram +kmod-spi-bitbang
   KCONFIG:= \
+	   CONFIG_FB=y \
        CONFIG_FB_BACKLIGHT=y \
        CONFIG_FB_DEFERRED_IO=y \
-       CONFIG_FB_TFT
-  FILES:= \
-       $(LINUX_DIR)/drivers/staging/fbtft/fbtft.ko
-  AUTOLOAD:=$(call AutoLoad,08,fbtft)
+	   CONFIG_FB_TFT=y
 endef
 
 define KernelPackage/fb-tft/description
@@ -262,6 +260,46 @@ define KernelPackage/fb-tft/description
 endef
 
 $(eval $(call KernelPackage,fb-tft))
+
+
+define KernelPackage/fb-tft-st7789p3
+  SUBMENU:=$(VIDEO_MENU)
+  TITLE:=FB driver for the ST7789P3 LCD Controller
+  DEPENDS:=+kmod-fb-tft +kmod-backlight-pwm
+  KCONFIG:= \
+	  CONFIG_FB=y \
+	  CONFIG_TOUCHSCREEN_IQS5XX=n \
+	  CONFIG_FIELDBUS_DEV=n \
+	  CONFIG_RTL8723BS=n \
+	  CONFIG_WILC1000_SDIO=n \
+	  CONFIG_WILC1000_SPI=n \
+	  CONFIG_FONT_TER16x32=n \
+	  CONFIG_FB_TFT_ST7789P3=y
+endef
+
+define KernelPackage/fb-tft-st7789p3/description
+  FB driver for the ST7789P3 LCD Controller
+endef
+
+$(eval $(call KernelPackage,fb-tft-st7789p3))
+
+
+define KernelPackage/fb-tft-glinet-be10000-logo
+  SUBMENU:=$(VIDEO_MENU)
+  TITLE:=GL.iNet BE10000 framebuffer boot logo
+  KCONFIG:= \
+	  CONFIG_LOGO=y \
+	  CONFIG_LOGO_GLINET_BE10000_CLUT224=y \
+	  CONFIG_LOGO_LINUX_MONO=n \
+	  CONFIG_LOGO_LINUX_VGA16=n \
+	  CONFIG_LOGO_LINUX_CLUT224=n
+endef
+
+define KernelPackage/fb-tft-glinet-be10000-logo/description
+  GL.iNet boot logo displayed by the ST7789P3 framebuffer console
+endef
+
+$(eval $(call KernelPackage,fb-tft-glinet-be10000-logo))
 
 
 define KernelPackage/fb-tft-ili9486

@@ -344,10 +344,23 @@ mediatek_setup_macs()
 	[ -n "$label_mac" ] && ucidef_set_label_macaddr $label_mac
 }
 
+mediatek_setup_wireless()
+{
+	local board="$1"
+
+	case "$board" in
+	glinet,gl-be10000)
+		ucidef_set_country "DE"
+		ucidef_set_wireless "all" "OpenWrt"
+		;;
+	esac
+}
+
 board_config_update
 board=$(board_name)
 mediatek_setup_interfaces $board
 mediatek_setup_macs $board
+mediatek_setup_wireless $board
 board_config_flush
 
 exit 0

@@ -1685,6 +1685,23 @@ endif
 endef
 TARGET_DEVICES += glinet_gl-be10000
 
+define Device/glinet_gl-be14000
+  DEVICE_VENDOR := GL.iNet
+  DEVICE_MODEL := GL-BE14000
+  DEVICE_DTS := mt7988a-glinet-gl-be14000
+  DEVICE_DTS_DIR := ../dts
+  BOARD_NAME := glinet,gl-be14000
+  SUPPORTED_DEVICES += glinet,gl-be14000
+  DEVICE_PACKAGES := mkf2fs e2fsprogs blkid blockdev losetup \
+	 kmod-fs-ext4 kmod-fs-f2fs kmod-fs-vfat kmod-i2c-gpio kmod-mmc \
+	 kmod-nls-cp437 kmod-nls-iso8859-1 kmod-hwmon-pwmfan \
+	 kmod-mt7996-firmware kmod-mt7996-233-firmware mt7988-wo-firmware kmod-phy-motorcomm \
+	 kmod-dsa-yt92xx kmod-sfp kmod-usb3 kmod-fb-tft-st7789p3 \
+	 kmod-fb-tft-glinet-be10000-logo
+  IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
+endef
+TARGET_DEVICES += glinet_gl-be14000
+
 define Device/glinet_gl-mt2500
   DEVICE_VENDOR := GL.iNet
   DEVICE_MODEL := GL-MT2500

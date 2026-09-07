@@ -10,6 +10,7 @@ and image profile.
 | Model | Complete configuration | Target |
 | --- | --- | --- |
 | GL-BE10000 | `gl_configs/gl-be10000.config` | MediaTek Filogic |
+| GL-BE14000 | `gl_configs/gl-be14000.config` | MediaTek Filogic |
 
 Only models listed in this table have a complete configuration ready for a
 direct build. Additional models must provide a separate configuration named
@@ -48,10 +49,11 @@ updated. Feed preparation is shared by all supported models.
 
 ## 3. Select a model and copy its complete configuration
 
-Set `MODEL` to a supported configuration name. For GL-BE10000:
+Set `MODEL` to a configuration name from the supported-model table. For
+GL-BE14000:
 
 ```sh
-MODEL=gl-be10000
+MODEL=gl-be14000
 test -f "gl_configs/${MODEL}.config"
 cp "gl_configs/${MODEL}.config" .config
 make defconfig
@@ -60,13 +62,22 @@ make defconfig
 Each file under `gl_configs/` is a full `.config`, not a configuration fragment.
 Do not enable multiple device profiles in one configuration.
 
-The GL-BE10000 configuration selects:
+The complete configurations select the following profiles:
 
-```text
-Target System: MediaTek Ralink ARM
-Subtarget: Filogic 8x0
-Target Profile: GL.iNet GL-BE10000
-```
+| Model | Target System | Subtarget | Target Profile |
+| --- | --- | --- | --- |
+| GL-BE10000 | MediaTek Ralink ARM | Filogic 8x0 | GL.iNet GL-BE10000 |
+| GL-BE14000 | MediaTek Ralink ARM | Filogic 8x0 | GL.iNet GL-BE14000 |
+
+## GL-BE14000 default network
+
+The default LAN address is `192.168.1.1/24`. Ports `lan1` through `lan8`
+belong to LAN, the dedicated `eth2` port is the DHCP WAN, and `sfp` is the
+second DHCP WAN.
+
+These defaults apply to a clean installation or after resetting the
+configuration. An upgrade that keeps settings preserves the existing
+network configuration.
 
 ## 4. Build the firmware
 
@@ -89,7 +100,7 @@ The generated images are written under:
 bin/targets/<target>/<subtarget>/
 ```
 
-For GL-BE10000, the output directory is:
+Both currently supported models use this output directory:
 
 ```text
 bin/targets/mediatek/filogic/
@@ -102,7 +113,7 @@ complete configuration and normalize it before building:
 
 ```sh
 # Replace this value with a model listed in the supported-model table.
-MODEL=gl-be10000
+MODEL=gl-be14000
 test -f "gl_configs/${MODEL}.config"
 cp "gl_configs/${MODEL}.config" .config
 make defconfig
@@ -119,9 +130,10 @@ make dirclean
 Then copy the new model configuration and start the build. Models on the same
 target and subtarget normally do not require `make dirclean`.
 
-## Complete GL-BE10000 command sequence
+## Complete command sequence
 
-For a clean GL-BE10000 build environment, run:
+For a clean build environment, set `MODEL` to either `gl-be10000` or
+`gl-be14000` and run:
 
 ```sh
 git clone --branch openwrt-25.12 --single-branch \
@@ -129,7 +141,7 @@ git clone --branch openwrt-25.12 --single-branch \
 cd gl-openwrt
 ./scripts/feeds update -a
 ./scripts/feeds install -a
-MODEL=gl-be10000
+MODEL=gl-be14000
 test -f "gl_configs/${MODEL}.config"
 cp "gl_configs/${MODEL}.config" .config
 make defconfig

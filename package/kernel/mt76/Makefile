@@ -8,9 +8,9 @@ PKG_LICENSE_FILES:=
 
 PKG_SOURCE_URL:=https://github.com/openwrt/mt76
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_DATE:=2026-03-19
-PKG_SOURCE_VERSION:=39c960c3ada558b4c2e7915772483d3731573d09
-PKG_MIRROR_HASH:=7a9f8ea21eee5324e6638ace627dd305b3650ae6ca86109317d9ee83702140eb
+PKG_SOURCE_DATE:=2026-07-01
+PKG_SOURCE_VERSION:=59676919ea408b0b13a9d23f2e2e1a1ab407fba1
+PKG_MIRROR_HASH:=8a6dc6dac37ed56fcbfd874359f5c25acb65bcfaa795d50494cba17c98405dd5
 
 PKG_MAINTAINER:=Felix Fietkau <nbd@nbd.name>
 PKG_USE_NINJA:=0
@@ -32,6 +32,22 @@ STAMP_CONFIGURED_DEPENDS := $(STAGING_DIR)/usr/include/mac80211-backport/backpor
 include $(INCLUDE_DIR)/kernel.mk
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/cmake.mk
+
+MT7927_FIRMWARE_URL:=https://gitlab.com/kernel-firmware/linux-firmware/-/raw/20260519/mediatek/mt7927
+
+define Download/mt7927-patch-firmware
+  FILE:=WIFI_MT6639_PATCH_MCU_2_1_hdr.bin
+  URL:=$(MT7927_FIRMWARE_URL)
+  HASH:=7a5aacf68ed8526c1d94ba962f84046496b3909562decf8bb690cfbd8de5b65e
+endef
+$(eval $(call Download,mt7927-patch-firmware))
+
+define Download/mt7927-ram-firmware
+  FILE:=WIFI_RAM_CODE_MT6639_2_1.bin
+  URL:=$(MT7927_FIRMWARE_URL)
+  HASH:=e841f5ed4fe547ff2f15275a2f330bb19a253db92e3e59cbdfd8581d72b2582d
+endef
+$(eval $(call Download,mt7927-ram-firmware))
 
 CMAKE_SOURCE_DIR:=$(PKG_BUILD_DIR)/tools
 CMAKE_BINARY_DIR:=$(PKG_BUILD_DIR)/tools
@@ -363,7 +379,7 @@ endef
 
 define KernelPackage/mt7925-firmware
   $(KernelPackage/mt76-default)
-  TITLE:=MediaTek MT7925 firmware
+  TITLE:=MediaTek MT7925/MT7927 firmware
   DEPENDS+=+kmod-mt7925e
 endef
 
@@ -661,11 +677,17 @@ define KernelPackage/mt7922-firmware/install
 endef
 
 define KernelPackage/mt7925-firmware/install
-        $(INSTALL_DIR) $(1)/lib/firmware/mediatek/mt7925
+	$(INSTALL_DIR) \
+		$(1)/lib/firmware/mediatek/mt7925 \
+		$(1)/lib/firmware/mediatek/mt7927
 	cp \
 		$(PKG_BUILD_DIR)/firmware/mt7925/WIFI_MT7925_PATCH_MCU_1_1_hdr.bin \
 		$(PKG_BUILD_DIR)/firmware/mt7925/WIFI_RAM_CODE_MT7925_1_1.bin \
 		$(1)/lib/firmware/mediatek/mt7925
+	cp \
+		$(DL_DIR)/WIFI_MT6639_PATCH_MCU_2_1_hdr.bin \
+		$(DL_DIR)/WIFI_RAM_CODE_MT6639_2_1.bin \
+		$(1)/lib/firmware/mediatek/mt7927
 endef
 
 define KernelPackage/mt7990-firmware/install

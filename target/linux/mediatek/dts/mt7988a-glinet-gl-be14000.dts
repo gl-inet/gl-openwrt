@@ -395,7 +395,8 @@
         mt7996@0,0 {
             reg = <0x0000 0 0 0 0>;
             compatible = "mediatek,mt7996";
-            mediatek,eeprom-name = "mt7996_eeprom.bin";
+            nvmem-cells = <&eeprom_factory_0>;
+            nvmem-cell-names = "eeprom";
         };
     };
 };
@@ -797,6 +798,16 @@
 
                 block-partition-factory {
                     partname = "factory";
+
+                    nvmem-layout {
+                        compatible = "fixed-layout";
+                        #address-cells = <1>;
+                        #size-cells = <1>;
+
+                        eeprom_factory_0: eeprom@0 {
+                            reg = <0x0 0x1e00>;
+                        };
+                    };
                 };
 
                 block-partition-glcfg {

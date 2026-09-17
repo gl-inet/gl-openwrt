@@ -1697,7 +1697,7 @@ define Device/glinet_gl-be14000
 	 kmod-nls-cp437 kmod-nls-iso8859-1 kmod-hwmon-pwmfan \
 	 kmod-mt7996-firmware kmod-mt7996-233-firmware mt7988-wo-firmware kmod-phy-motorcomm \
 	 kmod-dsa-yt92xx kmod-sfp kmod-usb3 kmod-fb-tft-st7789p3 \
-	 kmod-fb-tft-glinet-be10000-logo
+	 kmod-fb-tft-glinet-be10000-logo kmod-input-touchscreen-cst353x kmod-input-evdev
   IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
 endef
 TARGET_DEVICES += glinet_gl-be14000
